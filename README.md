@@ -1,7 +1,7 @@
 # Desafio: Conceitos do Node.js (Nivel 1) #rocketseat.com.br
 
 ##### Pré-Requisitos:
-* Ter Node.js instalado e Yarn instalado
+* Ter Node.js e Yarn instalados
   > Node = **https://nodejs.org/en/**
   
   > Yarn = '**npm install -g yarn**' (dentro do prompt command do node ok! ;))

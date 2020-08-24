@@ -59,21 +59,12 @@ app.post("/repositories", (request, response) => {
 
     repositories.push(repository);
 
-    return response.json( { message: "Repository incluído com sucesso.", repository });
+    return response.json( repository );
 });
 
 app.put("/repositories/:id", (request, response) => {
     const { id } = request.params;
-    const { title, url, techs } = request.body;
-
-    if(title === "" || typeof(title) === typeof(undefined)){
-      return response.status(400).json({ error: "Title é um parâmetro obrigatório para um  Repository."});
-    }
-    
-    if(url === "" || typeof(url) === typeof(undefined)){
-      return response.status(400).json({ error: "Url é um parâmetro obrigatório para um  Repository."});
-    }
-
+    const { url, title, techs } = request.body;
     const repositoryIndex = repositories.findIndex(repository => repository.id === id);
 
     if(repositoryIndex < 0){
@@ -122,7 +113,7 @@ app.post("/repositories/:id/like", (request, response) => {
 
     repository.likes  = repository.likes + 1;
 
-    return response.json( { message: "Like no repository adicionado com sucesso.", repository });
+    return response.json( repository );
 });
 
 module.exports = app;

@@ -1,5 +1,4 @@
-# GoStack_Challenge_Node.js_Concepts
-Desafio: Conceitos do Node.js (Nivel 1)
+# Desafio: Conceitos do Node.js (Nivel 1) #rocketseat.com.br
 
 ##### Pré-Requisitos:
 * Ter Node.js instalado e Yarn instalado

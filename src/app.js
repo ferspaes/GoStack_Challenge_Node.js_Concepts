@@ -2,14 +2,14 @@
  * 
  * Início do desafio em: 20/08/2020
  * 
- * Termino do desafio em: 
+ * Termino do desafio em: 24/08/2020
  * 
  */
 
 const express = require("express");
 const cors = require("cors");
 
-const { v4: uuid } = require('uuid');
+const { uuid, isUuid } = require('uuidv4');
 
 const app = express();
 
@@ -18,24 +18,111 @@ app.use(cors());
 
 const repositories = [];
 
+function validateProjectId(request, response, next){
+  const { id } = request.params;
+
+  if(!isUuid(id)){
+      return response.status(400).json({ error: 'Invalid project ID.' });
+  }
+
+  return next();
+}
+
+app.use('/repositories/:id', validateProjectId);
+
 app.get("/repositories", (request, response) => {
-  // TODO
+  
+  const { title } = request.query;
+
+  const results = title 
+    ? repositories.filter(repository => repository.title.includes(title))
+    : repositories;
+
+  return response.json(results);
 });
 
 app.post("/repositories", (request, response) => {
-  // TODO
+  const { title, url, techs } = request.body;
+
+  if(title === "" || typeof(title) === typeof(undefined) ||
+    url === "" || typeof(url) === typeof(undefined) ||
+    techs === "" || typeof(techs) === typeof(undefined)){
+    return response.status(400).json({ error: "Parâmetros insuficientes para a criação de um Repository."});
+  }
+
+  const repository = { 
+    id: uuid(), 
+    title: title, 
+    url: url, 
+    techs: techs, 
+    likes: 0 };
+
+    repositories.push(repository);
+
+    return response.json( { message: "Repository incluído com sucesso.", repository });
 });
 
 app.put("/repositories/:id", (request, response) => {
-  // TODO
+    const { id } = request.params;
+    const { title, url, techs } = request.body;
+
+    if(title === "" || typeof(title) === typeof(undefined)){
+      return response.status(400).json({ error: "Title é um parâmetro obrigatório para um  Repository."});
+    }
+    
+    if(url === "" || typeof(url) === typeof(undefined)){
+      return response.status(400).json({ error: "Url é um parâmetro obrigatório para um  Repository."});
+    }
+
+    const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+
+    if(repositoryIndex < 0){
+        return response.status(400).json({ error: "Repository not found."});
+    };
+    
+    const repo =  repositories[repositoryIndex];
+
+    const repository = {
+      id: id,
+      title: title, 
+      url: url, 
+      techs: techs,
+      likes: repo.likes
+    };
+
+    repositories[repositoryIndex] = repository;
+    
+    return response.json(repositories[repositoryIndex]);
 });
 
 app.delete("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+
+    const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+
+    if(repositoryIndex < 0){
+        return response.status(400).json({ error: "Repository not found."});
+    };
+
+    repositories.splice(repositoryIndex, 1);
+
+    return response.status(204).send();
 });
 
 app.post("/repositories/:id/like", (request, response) => {
-  // TODO
+  const { id } = request.params;
+
+    const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+
+    if(repositoryIndex < 0){
+        return response.status(400).json({ error: "Repository not found."});
+    };
+
+    var repository = repositories[repositoryIndex];
+
+    repository.likes  = repository.likes + 1;
+
+    return response.json( { message: "Like no repository adicionado com sucesso.", repository });
 });
 
 module.exports = app;
